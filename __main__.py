@@ -8,7 +8,7 @@ from datetime import datetime
 import win32utils
 from win32utils import CopyParams
 
-ALLOWED_EXTENSIONS = {'.jpg', '.mov', '.heic', '.png', '.mp4'}
+ALLOWED_EXTENSIONS = {'.jpg', '.mov', '.heic'}
 
 # changes "a" to "_" in "202301_a\IMG_1694.HEIC"
 def remove_letter_suffix_from_folder(filePath):
