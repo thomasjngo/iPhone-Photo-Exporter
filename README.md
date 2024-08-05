@@ -1,4 +1,4 @@
-# iPhoneImport
+# iPhone Photo Exporter
 
 This Python script copies files from an iPhone (or, well, any other device that is accessible from the Windows Shell) to
 a destination folder on Windows.
