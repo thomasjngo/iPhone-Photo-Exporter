@@ -1,7 +1,6 @@
 # iPhone Photo Exporter
 
-This Python script copies files from an iPhone (or, well, any other device that is accessible from the Windows Shell) to
-a destination folder on Windows.
+This Python script copies files from an iPhone (or, well, any other device that is accessible from the Windows Shell) with a file extension in the list of `ALLOWED_EXTENSIONS` to a destination folder on Windows.
 
 The list of files that have been copied can be logged into a metadata folder so that next time the script is run it can
 tell which files are new.
