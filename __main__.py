@@ -8,11 +8,11 @@ from datetime import datetime
 import win32utils
 from win32utils import CopyParams
 
+ALLOWED_EXTENSIONS = {'.jpg', '.mov', '.heic'}
 
 # changes "a" to "_" in "202301_a\IMG_1694.HEIC"
 def remove_letter_suffix_from_folder(filePath):
     return re.sub("_[a-z]\\\\", "__\\\\", filePath)
-
 
 # Loads paths of already imported files into a set
 def load_already_imported_file_names(metadata_folder):
@@ -33,7 +33,6 @@ def load_already_imported_file_names(metadata_folder):
     print(f"Loaded {len(already_imported_files_set)} imported files")
     return already_imported_files_set
 
-
 # Resolves which files to import
 def resolve_items_to_import(source_folder_absolute_display_name, source_shell_items_by_path,
                             already_imported_files_set):
@@ -46,6 +45,11 @@ def resolve_items_to_import(source_folder_absolute_display_name, source_shell_it
         file_relative_path = remove_prefix(source_file_absolute_path, source_folder_absolute_display_name)
         file_relative_path = remove_prefix(file_relative_path, '\\')
         amended_file_path = remove_letter_suffix_from_folder(file_relative_path)
+        
+        # Check if the file has an allowed extension
+        if not any(amended_file_path.lower().endswith(ext) for ext in ALLOWED_EXTENSIONS):
+            continue
+        
         if amended_file_path not in already_imported_files_set:
             shell_items_to_copy[file_relative_path] = source_file_shell_item
             imported_file_set.add(amended_file_path)
@@ -53,12 +57,10 @@ def resolve_items_to_import(source_folder_absolute_display_name, source_shell_it
             not_imported_file_set.add(file_relative_path)
     return imported_file_set, not_imported_file_set, shell_items_to_copy
 
-
 def remove_prefix(str, prefix):
     if not str.startswith(prefix):
         raise Exception(f"'{str}' should start with '{prefix}")
     return str[len(prefix):]
-
 
 def copy_using_windows_shell(shell_items_to_copy_by_target_path, destination_base_path_str):
     target_folder_shell_item_by_path = {}
@@ -77,7 +79,6 @@ def copy_using_windows_shell(shell_items_to_copy_by_target_path, destination_bas
         copy_params_list.append(copy_params)
     win32utils.copy_multiple_files(copy_params_list)
 
-
 def write_imported_file_list_to_metadata_folder(metadata_folder, file_path_set):
     time_str = datetime.now().strftime("%Y-%m-%d_%H%M%S")
     imported_files_metadata_path = os.path.join(metadata_folder, f"imported_{time_str}.txt")
@@ -85,7 +86,6 @@ def write_imported_file_list_to_metadata_folder(metadata_folder, file_path_set):
     with open(imported_files_metadata_path, "w") as file:
         for filename in sorted(list(file_path_set)):
             file.write(f"{filename}\n")
-
 
 def main(args):
     print(f"Program args: {args.__dict__}")
@@ -114,7 +114,6 @@ def main(args):
 
     if len(imported_file_set) > 0:
         write_imported_file_list_to_metadata_folder(args.metadata_folder, imported_file_set)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
